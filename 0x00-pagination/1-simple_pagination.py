@@ -1,15 +1,18 @@
 import csv
 import math
-from typing import List
+from typing import List, Tuple
 
 
-def index_range(length: int, page: int, page_size: int) -> tuple:
-    """Calculate the start and end index based on the page and page size"""
-    if page < 1:
-        raise ValueError("Page number must be >= to 1.")
+def index_range(page: int, page_size: int) -> Tuple[int, int]:
+    """check if the arguments are valid"""
+    assert isinstance(page, int) and page > 0
+    assert isinstance(page_size, int) and page_size > 0
 
+    """calculate the start index and the end index"""
     start_index = (page - 1) * page_size
-    end_index = start_index + page_size - 1
+    end_index = (start_index + page_size)
+
+    """return the tuple of start index and end index"""
     return start_index, end_index
 
 
@@ -37,12 +40,13 @@ class Server:
         assert isinstance(
             page, int) and page > 0, "Page must be a positive integer"
         assert isinstance(
-            page_size, int) and page_size > 0, "Page size must be a positive integer"
+            page_size, int) and page_size > 0, "Must be a positive integer"
 
         dataset = self.dataset()
-        start_index, end_index = index_range(len(dataset), page, page_size)
+        start_index, end_index = index_range(page, page_size)
+        end_index = min(end_index, len(dataset))
 
-        if start_index >= len(dataset):
+        if start_index > len(dataset):
             return []
 
-        return dataset[start_index:end_index]
+        return self.__dataset[start_index:end_index]
