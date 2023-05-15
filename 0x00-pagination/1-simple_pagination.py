@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+
+"""implements a method that takes 2 int arg
+import conttent from a CSV"""
+
 import csv
 import math
 from typing import List, Tuple
