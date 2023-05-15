@@ -6,6 +6,7 @@ import csv
 import math
 from typing import List, Dict, Union, Tuple
 
+
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
     """check if the arguments are valid"""
     assert isinstance(page, int) and page > 0
