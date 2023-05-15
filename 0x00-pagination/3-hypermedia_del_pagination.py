@@ -1,16 +1,9 @@
+#!/usr/bin/env python3
+"""implements a method with two int arg"""
+
 import csv
 import math
 from typing import List, Dict
-
-
-def index_range(length: int, page: int, page_size: int) -> tuple:
-    """Calculate the start and end index based on the page and page size"""
-    if page < 1:
-        raise ValueError("Page number must be >= 1.")
-
-    start_index = (page - 1) * page_size
-    end_index = start_index + page_size - 1
-    return start_index, end_index
 
 
 class Server:
@@ -50,22 +43,26 @@ class Server:
         """
         dataset = self.indexed_dataset()
         data_length = len(dataset)
-        assert 0 <= index < data_length
-        response = {}
-        data = []
-        response['index'] = index
-        for i in range(page_size):
-            try:
-                curr = dataset[index]
-            except KeyError:
-                continue
-            data.append(curr)
-            index += 1
+        assert index < data_length
 
-        response['data'] = data
-        response['page_size'] = len(data)
-        if dataset.get(index):
-            response['next_index'] = index
-        else:
-            response['next_index'] = None
-        return response
+        next_index = index + page_size
+        add = False
+        data = []
+        count = 0
+
+        for item in dataset:
+            count += 1
+            if count == index:
+                add = True
+
+            if count == next_index:
+                add = False
+                break
+
+            if add:
+                if dataset.get(count) is None:
+                    next_index += 1
+                else:
+                    data.append(dataset[count])
+        return {"index": index, "next_index": next_index,
+                "page_size": page_size, "data": data}
