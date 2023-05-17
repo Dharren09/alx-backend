@@ -2,38 +2,40 @@
 """creates a class that inherits and is a caching system"""
 
 from base_caching import BaseCaching
-import datetime
+from  functools import lru_cache
 
 
 class MRUCache(BaseCaching):
+    """least recently used cache"""
     """initializes the class"""
+    
+    USED = {}
+
     def __init__(self):
         super().__init__()
-        self.time_stamp = {}
 
     def put(self, key, item):
         """adds a new key value pair to the caching system"""
-        recent_key = None
-        if key and item:
-            self.cache_data[key] = item
-            recent = self.time_stamp[key] = datetime.datetime.now()
-            recent_key = key
-
-        if len(self.cache_data) > self.MAX_ITEMS:
-            min_time = datetime.datetime(year=1000, month=1, day=1)
-            diff = recent - min_time
-            second_recent = None
-            for key, value in self.time_stamp.items():
-                if key == recent_key:
-                    continue
-                if (recent - value) < diff:
-                    diff = recent - value
-                    second_recent = key
-            del self.time_stamp[second_recent]
-            del self.cache_data[second_recent]
-            print(f"DISCARD: {second_recent}")
+        if key is None or item is None:
+            pass
+        else:
+            self.cache_data.update({key: item})
+            self.USED.update({key: 0})
+            if self.cache_data.__len__() > super().MAX_ITEMS:
+                pop_item = max(self.USED)
+                if self.cache_data.get(pop_item) is not None:
+                    self.USED.pop(pop_item)
+                    self.cache_data.pop(pop_item)
+                print("DISCARD: {}".format(pop_item))
 
     def get(self, key):
         """gets the value from the caching system"""
-        self.time_stamp[key] = datetime.datetime.now()
+        if key is None or self.cache_data.get(key) is None:
+            return None
+
+        if self.USED.get(key) is not None:
+            self.USED[key] += 1
+        else:
+            self.USED[key] = 1
+
         return self.cache_data.get(key)
