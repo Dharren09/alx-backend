@@ -2,13 +2,13 @@
 """creates a class that inherits and is a caching system"""
 
 from base_caching import BaseCaching
-from  functools import lru_cache
+from functools import lru_cache
 
 
 class MRUCache(BaseCaching):
     """least recently used cache"""
     """initializes the class"""
-    
+
     USED = {}
 
     def __init__(self):
