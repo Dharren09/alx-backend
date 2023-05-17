@@ -9,25 +9,42 @@ class LFUCache(BaseCaching):
     def __init__(self):
         super().__init__()
         self.keys = []
+        self.uses = {}
 
     def put(self, key, item):
         """adds a new key value pair to the caching system"""
-        if key and item:
-            if key in self.cache_data:
-                self.cache_data[key] = item
-                self.keys.remove(key)
+        if key is not None and item is not None:
+            if (len(self.keys) == BaseCaching.MAX_ITEMS and
+                    key not in self.keys):
+                discard = self.keys.pop(self.keys.index(self.findLFU()))
+                del self.cache_data[discard]
+                del self.uses[discard]
+                print('DISCARD: {:s}'.format(discard))
+            self.cache_data[key] = item
+            if key not in self.keys:
                 self.keys.append(key)
+                self.uses[key] = 0
             else:
-                if len(self.cache_data) >= self.MAX_ITEMS:
-                    del self.cache_data[self.keys[0]]
-                    print("DISCARD: {}".format(self.keys[0]))
-                    self.keys.pop(0)
-                self.cache_data[key] = item
-                self.keys.append(key)
+                self.keys.append(self.keys.pop(self.keys.index(key)))
+                self.uses[key] += 1
 
     def get(self, key):
         """gets a value from the caching system"""
-        if key in self.cache_data:
-            self.keys.remove(key)
-            self.keys.append(key)
-        return self.cache_data.get(key)
+        if key is not None and key in self.cache_data:
+            self.keys.append(self.keys.pop(self.keys.index(key)))
+            self.uses[key] += 1
+            return self.cache_data[key]
+        return None
+
+    def findLFU(self):
+        """returns key of the least frequently used item in cache.
+        If multiple items have the same amount of uses, return the least
+        recently used one"""
+        items = list(self.uses.items())
+        freqs = [item[1] for item in items]
+        least = min(freqs)
+
+        lfus = [item[0] for item in items if item[1] == least]
+        for key in self.keys:
+            if key in lfus:
+                return key
