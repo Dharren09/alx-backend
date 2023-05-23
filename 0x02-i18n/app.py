@@ -57,9 +57,7 @@ def index():
                            home_header=home_header)
 
 
-"""@babel.localeselector"""
-
-
+@babel.localeselector
 def get_locale():
     local = request.args.get("locale")
     if local and local in app.config["LANGUAGES"]:
@@ -74,9 +72,7 @@ def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
-"""@babel.timezoneselector"""
-
-
+@babel.timezoneselector
 def get_timezone():
     """Retrieve time zone"""
     tz = request.args.get("timezone")
@@ -95,7 +91,7 @@ def get_timezone():
     return pytz.timezone(app.config["BABEL_DEFAULT_TIMEZONE"])
 
 
-babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
+# babel.init_app(app, locale_selector=get_locale, timezone_selector=get_timezone)
 
 
 if __name__ == '__main__':
