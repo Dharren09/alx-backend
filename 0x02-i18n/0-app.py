@@ -1,13 +1,12 @@
-#!/usr//bin/env python3
+#!/usr/bin/env python3
 """basic flask app that creates a single route"""
 
 from flask import Flask
 
-
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET'], strict_slashes=False)
 def index():
     return 'Hello World!'
 
