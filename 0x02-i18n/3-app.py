@@ -24,14 +24,15 @@ app.config.from_object(Config)
 @app.route('/', methods=['GET'], strict_slashes=False)
 def index():
     """Basic Flask app"""
-    return render_template('2-index.html')
+    return render_template('3-index.html')
 
 
+@babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
-babel.init_app(app, locale_selector=get_locale)
+# babel.init_app(app, locale_selector=get_locale)
 
 if __name__ == '__main__':
     app.run()
