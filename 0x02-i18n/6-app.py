@@ -4,7 +4,7 @@ instantiates the babel object in th app the stores it in module-level
 variable"""
 
 from flask import Flask, render_template, request, g
-from flask_babel import Babel, _
+from flask_babel import Babel
 from datetime import datetime
 
 
@@ -51,6 +51,8 @@ def index():
 
 @babel.localeselector
 def get_locale():
+    """function determines the appopriate lang basing
+    on the users preference"""
     local = request.args.get("locale")
     if local and local in app.config["LANGUAGES"]:
         return local
